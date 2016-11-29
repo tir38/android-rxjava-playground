@@ -19,7 +19,7 @@ public final class Manager {
 
 This results in duplcate calls. This isn't *usually* a problem when only one "thing" is making a request per screen. It might be overkill to hit the web service for every screen but this way we ensure data is always up to date.
 
-But what happens when two things that are on the screen at the same time both make a request? We get two calls to the web service when only one was needed:
+But what happens when two things that are on the screen at the same time both make a request? We get two calls to the web service when only one was needed. Here our Fragment and Activity are both requesting the same data:
 
 
 ```
