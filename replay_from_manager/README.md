@@ -44,10 +44,9 @@ We hold our "cold" observable as singleton. By using `publish`/`refcount` we are
 public Observable<String> getPublicEvents() {
     if (mPublicEventsObservable == null) {
         mPublicEventsObservable = mGithubWebService.getPublicEvents()
+				.map(response -> response.getBody().toString())
                 .publish()
-                .refCount()
-                .map(response -> response.getBody().toString());
-
+                .refCount();
     }
     return mPublicEventsObservable;
 }
@@ -66,4 +65,32 @@ resulting in a single web request and shared data between all callers:
 11-29 15:50:10.926 27327-27327/com.example.rxjavaplayground D/MainActivity: complete
 11-29 15:50:10.927 27327-27327/com.example.rxjavaplayground D/MainFragment: complete
 ```
+
+### Cache-like behavior
+Let's say that based on the synchronisity of the the app, the Fragment makes its request **after** the Activity's request has completed. This will result again in two web requests. I would think the thing to do would be to use `replay`:
+
+```
+public Observable<String> getPublicEvents() {
+    if (mPublicEventsObservable == null) {
+        mPublicEventsObservable = mGithubWebService.getPublicEvents()
+                .map(response -> response.getBody().toString())
+                .publish()
+                .refCount()
+                .replay(1)
+        ;
+    }
+    return mPublicEventsObservable;
+}
+```
+
+However this results in *neither* fragment/activity subscribing:
+
+```
+11-29 16:14:16.642 16530-16530/com.example.rxjavaplayground D/MainActivity: getting events from manager
+...
+11-29 16:14:20.661 16530-16530/com.example.rxjavaplayground D/MainFragment: getting events from manager
+```
+
+
+
 

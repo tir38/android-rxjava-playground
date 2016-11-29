@@ -1,6 +1,8 @@
 package com.example.rxjavaplayground;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -25,8 +27,12 @@ public final class MainFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        Log.d(TAG, "getting events from manager");
+        Handler handler = new Handler(Looper.myLooper());
+        handler.postDelayed(this::fetchEvents, 4000);
+    }
 
+    private void fetchEvents() {
+        Log.d(TAG, "getting events from manager");
         mManager.getPublicEvents()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

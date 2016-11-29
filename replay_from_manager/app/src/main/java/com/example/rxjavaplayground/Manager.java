@@ -12,14 +12,15 @@ public final class Manager {
         mGithubWebService = githubWebService;
     }
 
-    public Observable<String> getPublicEvents() {
-        if (mPublicEventsObservable == null) {
-            mPublicEventsObservable = mGithubWebService.getPublicEvents()
-                    .map(response -> response.getBody().toString())
-                    .publish()
-                    .refCount()
-            ;
-        }
-        return mPublicEventsObservable;
+public Observable<String> getPublicEvents() {
+    if (mPublicEventsObservable == null) {
+        mPublicEventsObservable = mGithubWebService.getPublicEvents()
+                .map(response -> response.getBody().toString())
+                .publish()
+                .refCount()
+                .replay(1)
+        ;
     }
+    return mPublicEventsObservable;
+}
 }
